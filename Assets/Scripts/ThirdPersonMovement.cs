@@ -39,24 +39,10 @@ public class ThirdPersonMovement : MonoBehaviour
                 ret = Mathf.PI;
         }
 
-        //Debug.Log("offset " + (ret * Mathf.Rad2Deg).ToString());
-
         if (adj != 0)
             ret += Mathf.Atan2(opp, adj);
 
         return ret;
-    }
-
-    private void Start()
-    {
-        Debug.Log(ProperArctan(0, 1));
-        Debug.Log(ProperArctan(1, 1));
-        Debug.Log(ProperArctan(1, 0));
-        Debug.Log(ProperArctan(1, -1));
-        Debug.Log(ProperArctan(0, -1));
-        Debug.Log(ProperArctan(-1, -1));
-        Debug.Log(ProperArctan(-1, 0));
-        Debug.Log(ProperArctan(-1, 1));
     }
 
     private void MakePlayerFaceCameraDirection() 
@@ -72,6 +58,15 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
+        float adjustedSpeed;
+        if (Input.GetButton("Sprint"))
+        {
+            adjustedSpeed = speed * 2;
+        } else
+        {
+            adjustedSpeed = speed;
+        }
+
         float cameraAngle = cameraTransform.eulerAngles.y;
 
         if (horizontal != 0 || vertical != 0)
@@ -84,7 +79,7 @@ public class ThirdPersonMovement : MonoBehaviour
             // Ensure that the direction is relative to the camera's current direction.
             // "normalized" makes the vector's length 1 while keeping the proportions of its dimensions.
             Vector3 movement = new Vector3(xMagnitude, 0f, yMagnitude).normalized;
-            controller.Move(speed * Time.deltaTime * movement);
+            controller.Move(adjustedSpeed * Time.deltaTime * movement);
         }
     }
 
