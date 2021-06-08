@@ -183,7 +183,7 @@ MonoBehaviour:
     m_DecelTime: 0.1
     m_InputAxisName: Mouse Y
     m_InputAxisValue: 0
-    m_InvertInput: 0
+    m_InvertInput: 1
     m_MinValue: 0
     m_MaxValue: 1
     m_Wrap: 0
@@ -207,7 +207,7 @@ MonoBehaviour:
     m_DecelTime: 0.1
     m_InputAxisName: Mouse X
     m_InputAxisValue: 0
-    m_InvertInput: 1
+    m_InvertInput: 0
     m_MinValue: -180
     m_MaxValue: 180
     m_Wrap: 1
@@ -1238,7 +1238,7 @@ GameObject:
   - component: {fileID: 1808794074}
   - component: {fileID: 1808794073}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Duck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1272,8 +1272,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 1808794074}
-  thirdPersonCamera: {fileID: 16346941}
+  cameraTransform: {fileID: 963194228}
   speed: 6
+  turnSmoothTime: 0.1
 --- !u!143 &1808794074
 CharacterController:
   m_ObjectHideFlags: 0
