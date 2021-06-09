@@ -14,37 +14,6 @@ public class ThirdPersonMovement : MonoBehaviour
     // Why is this necessary, then? Does the value usually matter?
     float turnVelocity;
 
-    // Given a vector (x, y), this function returns the full angle (not reference angle) to that vector in radians.
-    float ProperArctan(float x, float y) 
-    {
-        float opp;
-        float adj;
-
-        float ret = 0;
-        if (y > 0 || (y == 0 && x < 0)) 
-        {
-            opp = Mathf.Abs(y);
-            adj = Mathf.Abs(x);
-
-            if (x < 0)
-                ret = 3 * Mathf.PI / 2; 
-        } else
-        {
-            opp = Mathf.Abs(x);
-            adj = Mathf.Abs(y);
-
-            if (x > 0)
-                ret = Mathf.PI / 2;
-            else
-                ret = Mathf.PI;
-        }
-
-        if (adj != 0)
-            ret += Mathf.Atan2(opp, adj);
-
-        return ret;
-    }
-
     private void MakePlayerFaceCameraDirection() 
     {
         float cameraAngle = cameraTransform.eulerAngles.y;
@@ -58,6 +27,7 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
+        // todo - make a "sprintPressedDown" and "sprintLetUp" set of functions to make this more concise.
         float adjustedSpeed;
         if (Input.GetButton("Sprint"))
         {
@@ -71,15 +41,16 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (horizontal != 0 || vertical != 0)
         {
-            float cameraAngleRad = cameraAngle * Mathf.Deg2Rad;
-            float movementDirectionalOffsetRad = ProperArctan(horizontal, vertical);
-            float xMagnitude = Mathf.Sin(cameraAngleRad + movementDirectionalOffsetRad);
-            float yMagnitude = Mathf.Cos(cameraAngleRad + movementDirectionalOffsetRad);
+            // Mathf.Atan2 already does what I was doing manually. They handle the discontinuity for me.
+            // This is the angle we are moving towards, calculated by the movement vector and offset by the camera.
+            float movementAngleDeg = Mathf.Atan2(horizontal, vertical) * Mathf.Rad2Deg + cameraAngle;
 
-            // Ensure that the direction is relative to the camera's current direction.
-            // "normalized" makes the vector's length 1 while keeping the proportions of its dimensions.
-            Vector3 movement = new Vector3(xMagnitude, 0f, yMagnitude).normalized;
-            controller.Move(adjustedSpeed * Time.deltaTime * movement);
+            /* Using a Quaternion is more efficient than the trig functions. "Normalized" is not necessary
+             * because Vector3.forward already has a length of 1 - (0, 0, 1.0). Math is cool
+             */
+            Vector3 moveDir = Quaternion.Euler(0f, movementAngleDeg, 0f) * (Vector3.forward);
+
+            controller.Move(adjustedSpeed * Time.deltaTime * moveDir);
         }
     }
 
