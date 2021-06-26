@@ -1,11 +1,12 @@
 using UnityEngine;
 
-public class ThirdPersonMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     public CharacterController controller;
     public Transform cameraTransform;
     public GameObject limboObject;
 
+    private const float GRAVITY = 1f;
     private const float WALKING_SPEED = 6f;
     private const float RUNNING_SPEED = 12f;
     private const float TURN_SMOOTH_TIME = 0.1f;
@@ -13,6 +14,10 @@ public class ThirdPersonMovement : MonoBehaviour
     private float speed = WALKING_SPEED;
     private bool flashing = false;
     private bool teleporting = false;
+    private bool affectedByGravity = true;
+
+    // velocity that doesn't come from the player's control
+    private Vector3 externalVelocity;
 
     private float turnVelocity;
 
@@ -51,6 +56,14 @@ public class ThirdPersonMovement : MonoBehaviour
         // This "SmoothDampAngle" function ensures that we smoothly look at the new direction instead of snapping to it.
         float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, cameraAngle, ref turnVelocity, TURN_SMOOTH_TIME);
         transform.rotation = Quaternion.Euler(0f, angle, 0f);
+    }
+
+    private void TakeExternalForces()
+    {
+        if (affectedByGravity)
+        {
+
+        }
     }
 
     private bool CanMove()
@@ -112,6 +125,8 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         CheckInput();
         MakePlayerFaceCameraDirection();
+
+        TakeExternalForces();
 
         if (CanMove())
         {
